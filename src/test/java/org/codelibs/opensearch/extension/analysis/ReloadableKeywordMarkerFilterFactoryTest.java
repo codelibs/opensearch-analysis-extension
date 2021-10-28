@@ -1,0 +1,143 @@
+package org.codelibs.opensearch.extension.analysis;
+
+import static org.codelibs.opensearch.runner.OpenSearchRunner.newConfigs;
+import static org.junit.Assert.assertEquals;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
+import org.codelibs.curl.CurlResponse;
+import org.codelibs.opensearch.runner.OpenSearchRunner;
+import org.codelibs.opensearch.runner.net.OpenSearchCurl;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.common.settings.Settings.Builder;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.node.Node;
+
+public class ReloadableKeywordMarkerFilterFactoryTest {
+
+    private OpenSearchRunner runner;
+
+    private int numOfNode = 1;
+
+    private File[] keywordFiles;
+
+    private String clusterName;
+
+    @Before
+    public void setUp() throws Exception {
+        clusterName = "es-analysisja-" + System.currentTimeMillis();
+        runner = new OpenSearchRunner();
+        runner.onBuild(new OpenSearchRunner.Builder() {
+            @Override
+            public void build(final int number, final Builder settingsBuilder) {
+                settingsBuilder.put("http.cors.enabled", true);
+                settingsBuilder.put("http.cors.allow-origin", "*");
+                settingsBuilder.put("discovery.type", "single-node");
+                // settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9301");
+                // settingsBuilder.putList("cluster.initial_master_nodes", "127.0.0.1:9301");
+            }
+        }).build(newConfigs().clusterName(clusterName).numOfNode(numOfNode).pluginTypes("org.codelibs.opensearch.extension.ExtensionPlugin"));
+
+        keywordFiles = null;
+    }
+
+    @After
+    public void cleanUp() throws Exception {
+        runner.close();
+        runner.clean();
+        if (keywordFiles != null) {
+            for (File file : keywordFiles) {
+                file.deleteOnExit();
+            }
+        }
+    }
+
+    @Test
+    public void test_basic() throws Exception {
+        keywordFiles = new File[numOfNode];
+        for (int i = 0; i < numOfNode; i++) {
+            String homePath = runner.getNode(i).settings().get("path.home");
+            keywordFiles[i] = new File(new File(homePath, "config"), "keywords.txt");
+            updateDictionary(keywordFiles[i], "consisted\nconsists");
+        }
+
+        runner.ensureYellow();
+        Node node = runner.node();
+
+        final String index = "dataset";
+
+        final String indexSettings = "{\"index\":{\"analysis\":{" + "\"filter\":{"
+                + "\"stem1_filter\":{\"type\":\"flexible_porter_stem\",\"step1\":true,\"step2\":false,\"step3\":false,\"step4\":false,\"step5\":false,\"step6\":false},"
+                + "\"marker_filter\":{\"type\":\"reloadable_keyword_marker\",\"keywords_path\":\"keywords.txt\",\"reload_interval\":\"500ms\"}"
+                + "},"//
+                + "\"analyzer\":{" + "\"default_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"whitespace\"},"
+                + "\"stem1_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"whitespace\",\"filter\":[\"marker_filter\",\"stem1_filter\"]}"
+                + "}"//
+                + "}}}";
+        runner.createIndex(index, Settings.builder().loadFromSource(indexSettings, XContentType.JSON).build());
+        runner.ensureYellow();
+
+        {
+            String text = "consist consisted consistency consistent consistently consisting consists";
+            try (CurlResponse response = OpenSearchCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
+                    .body("{\"analyzer\":\"stem1_analyzer\",\"text\":\"" + text + "\"}").execute()) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> tokens = (List<Map<String, Object>>) response.getContent(OpenSearchCurl.jsonParser()).get("tokens");
+                assertEquals(7, tokens.size());
+                assertEquals("consist", tokens.get(0).get("token").toString());
+                assertEquals("consisted", tokens.get(1).get("token").toString());
+                assertEquals("consistency", tokens.get(2).get("token").toString());
+                assertEquals("consistent", tokens.get(3).get("token").toString());
+                assertEquals("consistently", tokens.get(4).get("token").toString());
+                assertEquals("consist", tokens.get(5).get("token").toString());
+                assertEquals("consists", tokens.get(6).get("token").toString());
+            }
+        }
+
+        for (int i = 0; i < numOfNode; i++) {
+            String homePath = runner.getNode(i).settings().get("path.home");
+            keywordFiles[i] = new File(new File(homePath, "config"), "keywords.txt");
+            updateDictionary(keywordFiles[i], "consisting\nconsistent");
+        }
+
+        Thread.sleep(1100);
+
+        {
+            String text = "consist consisted consistency consistent consistently consisting consists";
+            try (CurlResponse response = OpenSearchCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
+                    .body("{\"analyzer\":\"stem1_analyzer\",\"text\":\"" + text + "\"}").execute()) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> tokens = (List<Map<String, Object>>) response.getContent(OpenSearchCurl.jsonParser()).get("tokens");
+                assertEquals(7, tokens.size());
+                assertEquals("consist", tokens.get(0).get("token").toString());
+                assertEquals("consist", tokens.get(1).get("token").toString());
+                assertEquals("consistency", tokens.get(2).get("token").toString());
+                assertEquals("consistent", tokens.get(3).get("token").toString());
+                assertEquals("consistently", tokens.get(4).get("token").toString());
+                assertEquals("consisting", tokens.get(5).get("token").toString());
+                assertEquals("consist", tokens.get(6).get("token").toString());
+            }
+        }
+
+    }
+
+    private void updateDictionary(File file, String content) throws IOException, UnsupportedEncodingException, FileNotFoundException {
+        long old = file.lastModified();
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))) {
+            bw.write(content);
+            bw.flush();
+        }
+        System.out.println(file.getAbsolutePath() + ": " + (file.lastModified() - old));
+    }
+}
