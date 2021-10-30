@@ -16,7 +16,7 @@ Please file an [issue](https://github.com/codelibs/opensearch-analysis-extension
 
 ## Installation
 
-    $ $ES_HOME/bin/opensearch-plugin install org.codelibs:opensearch-analysis-extension:6.3.1
+    $ $OPENSEARCH_HOME/bin/opensearch-plugin install org.codelibs:opensearch-analysis-extension:1.1.0
 
 ## References
 
