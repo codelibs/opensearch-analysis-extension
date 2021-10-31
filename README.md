@@ -8,7 +8,7 @@ OpenSearch Analysis Extension Plugin provides Tokenizer/CharFilter/TokenFilter.
 
 ## Version
 
-[Versions in Maven Repository](https://repo1.maven.org/maven2/org/codelibs/opensearch-analysis-extension/)
+[Versions in Maven Repository](https://repo1.maven.org/maven2/org/codelibs/opensearch/opensearch-analysis-extension/)
 
 ### Issues/Questions
 
@@ -24,7 +24,7 @@ Please file an [issue](https://github.com/codelibs/opensearch-analysis-extension
 
 IterationMarkCharFilter normalizes an iteration mark charcter. 
 For example, this char filter replaces "学問のすゝめ" with "学問のすすめ".
-The property name is "iteration_mark".
+The property name is "iteration\_mark".
 
     curl -XPUT 'http://localhost:9200/sample/' -d'
     {
@@ -67,7 +67,7 @@ ProlongedSoundMarkCharFilter replaces the following prolonged sound mark charcte
 | U208B | SUBSCRIPT MINUS |
 | U30FC | KATAKANA-HIRAGANA SOUND MARK |
 
-This char filter name is "prolonged_sound_mark" as below.
+This char filter name is "prolonged\_sound\_mark" as below.
 
     curl -XPUT 'http://localhost:9200/sample/' -d'
     {
@@ -95,7 +95,7 @@ This char filter name is "prolonged_sound_mark" as below.
 ### KanjiNumberFilter (TokenFilter)
 
 KanjiNumberFilter relaces Kanji number character(ex. "一") with a number character(ex. "1").
-This token filter name is "kanji_number".
+This token filter name is "kanji\_number".
 
     curl -XPUT 'http://localhost:9200/sample/' -d'
     {
