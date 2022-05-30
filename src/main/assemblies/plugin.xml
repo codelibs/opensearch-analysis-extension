@@ -23,7 +23,7 @@
 				<exclude>org.codelibs.opensearch:opensearch-engine-server</exclude>
 				<exclude>org.codelibs.opensearch.plugin:analysis-kuromoji</exclude>
 				<exclude>org.apache.lucene:lucene-core</exclude>
-				<exclude>org.apache.lucene:lucene-analyzers-common</exclude>
+				<exclude>org.apache.lucene:lucene-analysis-common</exclude>
 			</excludes>
 		</dependencySet>
 	</dependencySets>

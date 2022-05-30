@@ -97,7 +97,6 @@ public class ExtensionPluginTest {
         Node node = runner.node();
 
         final String index = "dataset";
-        final String type = "item";
 
         final String indexSettings = "{\"index\":{\"analysis\":{"
                 + "\"tokenizer\":{"//
@@ -115,7 +114,6 @@ public class ExtensionPluginTest {
         // create a mapping
         final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()//
                 .startObject()//
-                .startObject(type)//
                 .startObject("properties")//
 
                 // id
@@ -136,11 +134,10 @@ public class ExtensionPluginTest {
                 .endObject()//
 
                 .endObject()//
-                .endObject()//
                 .endObject();
-        runner.createMapping(index, type, mappingBuilder);
+        runner.createMapping(index, mappingBuilder);
 
-        final IndexResponse indexResponse1 = runner.insert(index, type, "1",
+        final IndexResponse indexResponse1 = runner.insert(index, "1",
                 "{\"msg1\":\"東京スカイツリー\", \"msg2\":\"東京スカイツリー\", \"id\":\"1\"}");
         assertEquals(RestStatus.CREATED, indexResponse1.status());
         runner.refresh();
@@ -148,8 +145,8 @@ public class ExtensionPluginTest {
         String text;
         for (int i = 0; i < 1000; i++) {
             text = "東京スカイツリー";
-            assertDocCount(1, index, type, "msg1", text);
-            assertDocCount(1, index, type, "msg2", text);
+            assertDocCount(1, index, "msg1", text);
+            assertDocCount(1, index, "msg2", text);
 
             try (CurlResponse response = OpenSearchCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
                     .body("{\"analyzer\":\"ja_reload_analyzer\",\"text\":\"" + text + "\"}").execute()) {
@@ -180,15 +177,15 @@ public class ExtensionPluginTest {
                             + "朝青龍,朝青龍,アサショウリュウ,人名");
         }
 
-        final IndexResponse indexResponse2 = runner.insert(index, type, "2",
+        final IndexResponse indexResponse2 = runner.insert(index, "2",
                 "{\"msg1\":\"東京スカイツリー\", \"msg2\":\"東京スカイツリー\", \"id\":\"2\"}");
         assertEquals(RestStatus.CREATED, indexResponse2.status());
         runner.refresh();
 
         for (int i = 0; i < 1000; i++) {
             text = "東京スカイツリー";
-            assertDocCount(1, index, type, "msg1", text);
-            assertDocCount(2, index, type, "msg2", text);
+            assertDocCount(1, index, "msg1", text);
+            assertDocCount(2, index, "msg2", text);
 
             try (CurlResponse response = OpenSearchCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
                     .body("{\"analyzer\":\"ja_reload_analyzer\",\"text\":\"" + text + "\"}").execute()) {
@@ -217,7 +214,6 @@ public class ExtensionPluginTest {
         Node node = runner.node();
 
         final String index = "dataset";
-        final String type = "item";
 
         final String indexSettings = "{\"index\":{\"analysis\":{"
                 + "\"analyzer\":{"
@@ -231,7 +227,6 @@ public class ExtensionPluginTest {
         // create a mapping
         final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()//
                 .startObject()//
-                .startObject(type)//
                 .startObject("properties")//
 
                 // id
@@ -252,11 +247,10 @@ public class ExtensionPluginTest {
                 .endObject()//
 
                 .endObject()//
-                .endObject()//
                 .endObject();
-        runner.createMapping(index, type, mappingBuilder);
+        runner.createMapping(index, mappingBuilder);
 
-        final IndexResponse indexResponse1 = runner.insert(index, type, "1",
+        final IndexResponse indexResponse1 = runner.insert(index, "1",
                 "{\"msg1\":\"時々\", \"msg2\":\"時々\", \"id\":\"1\"}");
         assertEquals(RestStatus.CREATED, indexResponse1.status());
         runner.refresh();
@@ -264,9 +258,9 @@ public class ExtensionPluginTest {
         String[] inputs = new String[] { "こゝ ここ", "バナヽ バナナ", "学問のすゝめ 学問のすすめ",
                 "いすゞ いすず", "づゝ づつ", "ぶゞ漬け ぶぶ漬け", "各〻 各各" };
 
-        assertDocCount(1, index, type, "msg1", "時々");
-        assertDocCount(1, index, type, "msg1", "時時");
-        assertDocCount(1, index, type, "msg2", "時々");
+        assertDocCount(1, index, "msg1", "時々");
+        assertDocCount(1, index, "msg1", "時時");
+        assertDocCount(1, index, "msg2", "時々");
 
         for (int i = 0; i < inputs.length; i++) {
             String[] values = inputs[i].split(" ");
@@ -288,7 +282,6 @@ public class ExtensionPluginTest {
         Node node = runner.node();
 
         final String index = "dataset";
-        final String type = "item";
 
         final String indexSettings = "{\"index\":{\"analysis\":{"
                 + "\"analyzer\":{"
@@ -302,7 +295,6 @@ public class ExtensionPluginTest {
         // create a mapping
         final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()//
                 .startObject()//
-                .startObject(type)//
                 .startObject("properties")//
 
                 // id
@@ -323,11 +315,10 @@ public class ExtensionPluginTest {
                 .endObject()//
 
                 .endObject()//
-                .endObject()//
                 .endObject();
-        runner.createMapping(index, type, mappingBuilder);
+        runner.createMapping(index, mappingBuilder);
 
-        final IndexResponse indexResponse1 = runner.insert(index, type, "1",
+        final IndexResponse indexResponse1 = runner.insert(index, "1",
                 "{\"msg1\":\"あ‐\", \"msg2\":\"あ‐\", \"id\":\"1\"}");
         assertEquals(RestStatus.CREATED, indexResponse1.status());
         runner.refresh();
@@ -336,12 +327,12 @@ public class ExtensionPluginTest {
                 "\u2012", "\u2013", "\u2014", "\u2015", "\u207b", "\u208b",
                 "\u30fc" };
 
-        assertDocCount(1, index, type, "msg1", "あ‐");
-        assertDocCount(1, index, type, "msg2", "あ‐");
+        assertDocCount(1, index, "msg1", "あ‐");
+        assertDocCount(1, index, "msg2", "あ‐");
 
         for (String psm : psms) {
             String text = "あ" + psm;
-            assertDocCount(1, index, type, "msg1", text);
+            assertDocCount(1, index, "msg1", text);
             try (CurlResponse response = OpenSearchCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
                     .body("{\"analyzer\":\"ja_psmark_analyzer\",\"text\":\"" + text + "\"}").execute()) {
                 @SuppressWarnings("unchecked")
@@ -359,7 +350,6 @@ public class ExtensionPluginTest {
         Node node = runner.node();
 
         final String index = "dataset";
-        final String type = "item";
 
         final String indexSettings = "{\"index\":{\"analysis\":{"
                 + "\"tokenizer\":{"//
@@ -376,7 +366,6 @@ public class ExtensionPluginTest {
         // create a mapping
         final XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()//
                 .startObject()//
-                .startObject(type)//
                 .startObject("properties")//
 
                 // id
@@ -397,19 +386,18 @@ public class ExtensionPluginTest {
                 .endObject()//
 
                 .endObject()//
-                .endObject()//
                 .endObject();
-        runner.createMapping(index, type, mappingBuilder);
+        runner.createMapping(index, mappingBuilder);
 
-        final IndexResponse indexResponse1 = runner.insert(index, type, "1",
+        final IndexResponse indexResponse1 = runner.insert(index, "1",
                 "{\"msg1\":\"十二時間\", \"msg2\":\"十二時間\", \"id\":\"1\"}");
         assertEquals(RestStatus.CREATED, indexResponse1.status());
         runner.refresh();
 
-        assertDocCount(1, index, type, "msg1", "十二時間");
-        assertDocCount(1, index, type, "msg1", "12時間");
-        assertDocCount(1, index, type, "msg2", "十二時間");
-        assertDocCount(0, index, type, "msg2", "12時間");
+        assertDocCount(1, index, "msg1", "十二時間");
+        assertDocCount(1, index, "msg1", "12時間");
+        assertDocCount(1, index, "msg2", "十二時間");
+        assertDocCount(0, index, "msg2", "12時間");
 
         String text = "一億九千万円";
         try (CurlResponse response = OpenSearchCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
@@ -424,8 +412,8 @@ public class ExtensionPluginTest {
     }
 
     private void assertDocCount(int expected, final String index,
-            final String type, final String field, final String value) {
-        final SearchResponse searchResponse = runner.search(index, type,
+            final String field, final String value) {
+        final SearchResponse searchResponse = runner.search(index,
                 QueryBuilders.matchPhraseQuery(field, value), null,
                 0, numOfDocs);
         assertEquals(expected, searchResponse.getHits().getTotalHits().value);

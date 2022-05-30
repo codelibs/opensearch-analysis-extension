@@ -65,19 +65,18 @@ public class DisableGraphFilterFactoryTest {
                 + "}}}";
         runner.createIndex(index, Settings.builder().loadFromSource(indexSettings, XContentType.JSON).build());
         runner.ensureYellow();
-        runner.createMapping(index, "data",
-                "{\"data\":{\"properties\":{\"content\" : {\"type\" : \"text\",\"analyzer\":\"ja_analyzer\"}}}}");
+        runner.createMapping(index,
+                "{\"properties\":{\"content\" : {\"type\" : \"text\",\"analyzer\":\"ja_analyzer\"}}}");
         try (CurlResponse response = OpenSearchCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
                 .body("{\"analyzer\":\"ja_analyzer\",\"text\":\"レッドハウスフーズ\"}").execute()) {
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> tokens = (List<Map<String, Object>>) response.getContent(OpenSearchCurl.jsonParser()).get("tokens");
-            assertEquals(3, tokens.size());
+            assertEquals(2, tokens.size());
             assertEquals("レッド", tokens.get(0).get("token").toString());
-            assertEquals("レッドハウスフーズ", tokens.get(1).get("token").toString());
-            assertEquals("ハウスフーズ", tokens.get(2).get("token").toString());
+            assertEquals("ハウスフーズ", tokens.get(1).get("token").toString());
         }
 
-        runner.insert(index, "data", "1",
+        runner.insert(index, "1",
                 builder -> builder.setSource("{\"content\":\"レッド\"}", XContentType.JSON).setRefreshPolicy(RefreshPolicy.WAIT_UNTIL));
 
         SearchResponse response = runner.search(index, builder -> builder.setQuery(QueryBuilders.matchQuery("content", "レッドハウスフーズ")));
