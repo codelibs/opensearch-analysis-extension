@@ -11,7 +11,8 @@ import org.opensearch.index.analysis.AbstractCharFilterFactory;
 public class ProlongedSoundMarkCharFilterFactory extends AbstractCharFilterFactory {
     private char replacement;
 
-    public ProlongedSoundMarkCharFilterFactory(final IndexSettings indexSettings, final Environment env, final String name, final Settings settings) {
+    public ProlongedSoundMarkCharFilterFactory(final IndexSettings indexSettings, final Environment env, final String name,
+            final Settings settings) {
         super(indexSettings, name);
         final String value = settings.get("replacement");
         if (value == null || value.length() == 0) {

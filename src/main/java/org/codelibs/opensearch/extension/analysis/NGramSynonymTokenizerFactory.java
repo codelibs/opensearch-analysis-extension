@@ -21,7 +21,8 @@ public final class NGramSynonymTokenizerFactory extends AbstractTokenizerFactory
 
     private SynonymLoader synonymLoader = null;
 
-    public NGramSynonymTokenizerFactory(final IndexSettings indexSettings, final Environment env, final String name, final Settings settings) {
+    public NGramSynonymTokenizerFactory(final IndexSettings indexSettings, final Environment env, final String name,
+            final Settings settings) {
         super(indexSettings, settings, name);
         ignoreCase = settings.getAsBoolean("ignore_case", true);
         n = settings.getAsInt("n", NGramSynonymTokenizer.DEFAULT_N_SIZE);

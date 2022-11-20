@@ -10,7 +10,8 @@ import org.opensearch.index.analysis.AbstractCharFilterFactory;
 
 public class IterationMarkCharFilterFactory extends AbstractCharFilterFactory {
 
-    public IterationMarkCharFilterFactory(final IndexSettings indexSettings, final Environment env, final String name, final Settings settings) {
+    public IterationMarkCharFilterFactory(final IndexSettings indexSettings, final Environment env, final String name,
+            final Settings settings) {
         super(indexSettings, name);
     }
 

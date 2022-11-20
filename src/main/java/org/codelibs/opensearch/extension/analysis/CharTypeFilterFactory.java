@@ -15,7 +15,8 @@ public class CharTypeFilterFactory extends AbstractTokenFilterFactory {
 
     private final boolean letter;
 
-    public CharTypeFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name, final Settings settings) {
+    public CharTypeFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name,
+            final Settings settings) {
         super(indexSettings, name, settings);
 
         alphabetic = settings.getAsBoolean("alphabetic", true);

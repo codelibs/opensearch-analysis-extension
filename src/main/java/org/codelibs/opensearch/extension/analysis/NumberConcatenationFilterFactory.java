@@ -20,7 +20,8 @@ public class NumberConcatenationFilterFactory extends AbstractTokenFilterFactory
 
     private CharArraySet suffixWords;
 
-    public NumberConcatenationFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name, final Settings settings) {
+    public NumberConcatenationFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name,
+            final Settings settings) {
         super(indexSettings, name, settings);
 
         final String suffixWordsPath = settings.get("suffix_words_path");

@@ -9,7 +9,8 @@ import org.opensearch.index.analysis.AbstractTokenFilterFactory;
 
 public class KanjiNumberFilterFactory extends AbstractTokenFilterFactory {
 
-    public KanjiNumberFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name, final Settings settings) {
+    public KanjiNumberFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name,
+            final Settings settings) {
         super(indexSettings, name, settings);
     }
 
