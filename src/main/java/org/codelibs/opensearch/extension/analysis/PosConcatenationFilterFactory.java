@@ -20,7 +20,7 @@ public class PosConcatenationFilterFactory extends AbstractTokenFilterFactory {
     public PosConcatenationFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name, final Settings settings) {
         super(indexSettings, name, settings);
 
-        final List<String> tagList = Analysis.getWordList(environment, settings, "tags");
+        final List<String> tagList = Analysis.parseWordList(environment, settings, "tags", s -> s);
         if (tagList != null) {
             posTags.addAll(tagList);
         }
