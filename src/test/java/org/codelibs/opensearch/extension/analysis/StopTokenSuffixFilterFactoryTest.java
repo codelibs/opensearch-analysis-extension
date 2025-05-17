@@ -57,8 +57,8 @@ public class StopTokenSuffixFilterFactoryTest {
 
         final String indexSettings = "{\"index\":{\"analysis\":{" + "\"filter\":{"
                 + "\"stop_suffix_filter\":{\"type\":\"stop_suffix\",\"stopwords\":[\"bbb\",\"ddd\"],\"ignore_case\":true}" + "},"//
-                + "\"analyzer\":{" + "\"ja_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"reloadable_kuromoji_tokenizer\"},"
-                + "\"ja_stop_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"reloadable_kuromoji_tokenizer\",\"filter\":[\"stop_suffix_filter\"]}"
+                + "\"analyzer\":{" + "\"ja_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"japanese_tokenizer\"},"
+                + "\"ja_stop_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"japanese_tokenizer\",\"filter\":[\"stop_suffix_filter\"]}"
                 + "}"//
                 + "}}}";
         runner.createIndex(index, Settings.builder().loadFromSource(indexSettings, XContentType.JSON).build());
