@@ -32,36 +32,33 @@
 
 package org.codelibs.opensearch.extension.kuromoji.index.analysis;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.ja.JapaneseAnalyzer;
-import org.apache.lucene.analysis.ja.JapanesePartOfSpeechStopFilter;
+import org.apache.lucene.analysis.ja.JapaneseTokenizer;
+import org.apache.lucene.analysis.ja.dict.UserDictionary;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.env.Environment;
 import org.opensearch.index.IndexSettings;
-import org.opensearch.index.analysis.AbstractTokenFilterFactory;
+import org.opensearch.index.analysis.AbstractIndexAnalyzerProvider;
 import org.opensearch.index.analysis.Analysis;
 
-public class KuromojiPartOfSpeechFilterFactory extends AbstractTokenFilterFactory {
+public class KuromojiAnalyzerProvider extends AbstractIndexAnalyzerProvider<JapaneseAnalyzer> {
 
-    private final Set<String> stopTags = new HashSet<>();
+    private final JapaneseAnalyzer analyzer;
 
-    public KuromojiPartOfSpeechFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+    public KuromojiAnalyzerProvider(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         super(indexSettings, name, settings);
-        List<String> wordList = Analysis.parseWordList(env, settings, "stoptags", s -> s);
-        if (wordList != null) {
-            stopTags.addAll(wordList);
-        } else {
-            stopTags.addAll(JapaneseAnalyzer.getDefaultStopTags());
-        }
+        final Set<?> stopWords = Analysis.parseStopWords(env, settings, JapaneseAnalyzer.getDefaultStopSet());
+        final JapaneseTokenizer.Mode mode = KuromojiTokenizerFactory.getMode(settings);
+        final UserDictionary userDictionary = KuromojiTokenizerFactory.getUserDictionary(env, settings);
+        analyzer = new JapaneseAnalyzer(userDictionary, mode, CharArraySet.copy(stopWords), JapaneseAnalyzer.getDefaultStopTags());
     }
 
     @Override
-    public TokenStream create(TokenStream tokenStream) {
-        return new JapanesePartOfSpeechStopFilter(tokenStream, stopTags);
+    public JapaneseAnalyzer get() {
+        return this.analyzer;
     }
 
 }

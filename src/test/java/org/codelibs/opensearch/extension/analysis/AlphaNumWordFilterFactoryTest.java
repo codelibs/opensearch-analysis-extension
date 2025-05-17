@@ -60,7 +60,7 @@ public class AlphaNumWordFilterFactoryTest {
                 + "\"filter\":{" //
                 + "\"alphanum_word_filter\":{\"type\":\"alphanum_word\"}" + "}," //
                 + "\"tokenizer\":{" //
-                + "\"unigram_analyzer\":{\"type\":\"nGram\",\"min_gram\":\"1\",\"max_gram\":\"1\",\"token_chars\":[\"letter\",\"digit\"]}"
+                + "\"unigram_analyzer\":{\"type\":\"ngram\",\"min_gram\":\"1\",\"max_gram\":\"1\",\"token_chars\":[\"letter\",\"digit\"]}"
                 + "},"//
                 + "\"analyzer\":{" //
                 + "\"ngram_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"unigram_analyzer\"},"
@@ -146,7 +146,7 @@ public class AlphaNumWordFilterFactoryTest {
                 + "\"filter\":{" //
                 + "\"alphanum_word_filter\":{\"type\":\"alphanum_word\",\"max_token_length\":2}" + "}," //
                 + "\"tokenizer\":{" //
-                + "\"unigram_analyzer\":{\"type\":\"nGram\",\"min_gram\":\"1\",\"max_gram\":\"1\",\"token_chars\":[\"letter\",\"digit\"]}"
+                + "\"unigram_analyzer\":{\"type\":\"ngram\",\"min_gram\":\"1\",\"max_gram\":\"1\",\"token_chars\":[\"letter\",\"digit\"]}"
                 + "},"//
                 + "\"analyzer\":{" //
                 + "\"ngram_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"unigram_analyzer\"},"

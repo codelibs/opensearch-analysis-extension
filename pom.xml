@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.opensearch</groupId>
 	<artifactId>opensearch-analysis-extension</artifactId>
-	<version>2.19.1-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>This plugin provides an analysis library for Japanese.</description>
 	<inceptionYear>2011</inceptionYear>
@@ -15,17 +15,30 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	<organization>
+		<name>CodeLibs Project</name>
+		<url>https://www.codelibs.org/</url>
+	</organization>
+	<developers>
+		<developer>
+			<id>shinsuke</id>
+			<name>Shinsuke Sugaya</name>
+			<email>shinsuke.sugaya@codelibs.co</email>
+			<organization>CodeLibs Inc.</organization>
+			<organizationUrl>https://codelibs.co</organizationUrl>
+		</developer>
+	</developers>
 	<scm>
 		<connection>scm:git:git@github.com:codelibs/opensearch-analysis-extension.git</connection>
 		<developerConnection>scm:git:git@github.com:codelibs/opensearch-analysis-extension.git</developerConnection>
 		<url>git@github.com:codelibs/opensearch-analysis-extension.git</url>
 	</scm>
 	<properties>
-		<opensearch.version>2.19.1</opensearch.version>
-		<opensearch.runner.version>2.19.1.0</opensearch.runner.version>
+		<opensearch.version>3.0.0</opensearch.version>
+		<opensearch.runner.version>3.0.0.0-SNAPSHOT</opensearch.runner.version>
 		<opensearch.plugin.classname>org.codelibs.opensearch.extension.ExtensionPlugin</opensearch.plugin.classname>
-		<maven.compiler.target>11</maven.compiler.target>
-		<lucene.version>9.12.1</lucene.version>
+		<maven.compiler.target>21</maven.compiler.target>
+		<lucene.version>10.1.0</lucene.version>
 		<log4j.version>2.21.0</log4j.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -33,7 +46,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
+				<version>3.14.0</version>
 				<configuration>
 					<release>${maven.compiler.target}</release>
 					<encoding>UTF-8</encoding>
@@ -41,7 +54,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
+				<version>3.5.0</version>
 				<configuration>
 					<includes>
 						<include>**/*Test.java</include>
@@ -50,20 +63,8 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.2.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.6.3</version>
+				<version>3.11.2</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<docencoding>UTF-8</docencoding>
@@ -72,7 +73,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>3.7.1</version>
 				<configuration>
 					<appendAssemblyId>false</appendAssemblyId>
 					<outputDirectory>${project.build.directory}/releases/</outputDirectory>
@@ -116,10 +117,10 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>central</id>
-			<url>https://repo1.maven.org/maven2</url>
+			<id>snapshots.central.sonatype.com</id>
+			<url>https://central.sonatype.com/repository/maven-snapshots</url>
 			<releases>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>

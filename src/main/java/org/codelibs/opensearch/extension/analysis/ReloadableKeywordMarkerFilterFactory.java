@@ -22,7 +22,7 @@ public class ReloadableKeywordMarkerFilterFactory extends AbstractTokenFilterFac
 
         final String path = settings.get("keywords_path");
         if (path != null) {
-            keywordPath = environment.configFile().resolve(path);
+            keywordPath = environment.configDir().resolve(path);
         } else {
             keywordPath = null;
         }

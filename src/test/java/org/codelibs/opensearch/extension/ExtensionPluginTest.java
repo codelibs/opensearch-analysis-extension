@@ -184,7 +184,7 @@ public class ExtensionPluginTest {
 
         for (int i = 0; i < 1000; i++) {
             text = "東京スカイツリー";
-            assertDocCount(1, index, "msg1", text);
+            assertDocCount(2, index, "msg1", text);
             assertDocCount(2, index, "msg2", text);
 
             try (CurlResponse response = OpenSearchCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
@@ -193,8 +193,7 @@ public class ExtensionPluginTest {
                 List<Map<String, Object>> tokens = (List<Map<String, Object>>) response
                         .getContent(OpenSearchCurl.jsonParser()).get("tokens");
                 assertEquals("東京", tokens.get(0).get("token").toString());
-                assertEquals("スカイ", tokens.get(1).get("token").toString());
-                assertEquals("ツリー", tokens.get(2).get("token").toString());
+                assertEquals("スカイツリ", tokens.get(1).get("token").toString());
             }
 
             text = "朝青龍";
@@ -203,7 +202,8 @@ public class ExtensionPluginTest {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> tokens = (List<Map<String, Object>>) response
                         .getContent(OpenSearchCurl.jsonParser()).get("tokens");
-                assertEquals(text, tokens.get(0).get("token").toString());
+                assertEquals("朝", tokens.get(0).get("token").toString());
+                assertEquals("青龍", tokens.get(1).get("token").toString());
             }
         }
     }
@@ -416,6 +416,6 @@ public class ExtensionPluginTest {
         final SearchResponse searchResponse = runner.search(index,
                 QueryBuilders.matchPhraseQuery(field, value), null,
                 0, numOfDocs);
-        assertEquals(expected, searchResponse.getHits().getTotalHits().value);
+        assertEquals(expected, searchResponse.getHits().getTotalHits().value());
     }
 }

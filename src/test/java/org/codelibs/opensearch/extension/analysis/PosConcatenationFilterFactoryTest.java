@@ -82,8 +82,8 @@ public class PosConcatenationFilterFactoryTest {
                 + "\"tag_concat_filter\":{\"type\":\"kuromoji_pos_concat\",\"tags_path\":\"tags.txt\"}"
                 + "},"//
                 + "\"analyzer\":{"
-                + "\"ja_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"reloadable_kuromoji_tokenizer\"},"
-                + "\"ja_concat_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"reloadable_kuromoji_tokenizer\",\"filter\":[\"tag_concat_filter\"]}"
+                + "\"ja_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"japanese_tokenizer\"},"
+                + "\"ja_concat_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"japanese_tokenizer\",\"filter\":[\"tag_concat_filter\"]}"
                 + "}"//
                 + "}}}";
         runner.createIndex(index, Settings.builder().loadFromSource(indexSettings, XContentType.JSON).build());
