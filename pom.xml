@@ -6,7 +6,8 @@
 	<artifactId>opensearch-analysis-extension</artifactId>
 	<version>3.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<description>This plugin provides an analysis library for Japanese.</description>
+	<description>This plugin provides an analysis library for language processing in OpenSearch, including tokenization and morphological analysis using Lucene analyzers.</description>
+	<url>https://github.com/codelibs/opensearch-analysis-extension</url>
 	<inceptionYear>2011</inceptionYear>
 	<licenses>
 		<license>
@@ -35,7 +36,7 @@
 	</scm>
 	<properties>
 		<opensearch.version>3.0.0</opensearch.version>
-		<opensearch.runner.version>3.0.0.0-SNAPSHOT</opensearch.runner.version>
+		<opensearch.runner.version>3.0.0.0</opensearch.runner.version>
 		<opensearch.plugin.classname>org.codelibs.opensearch.extension.ExtensionPlugin</opensearch.plugin.classname>
 		<maven.compiler.target>21</maven.compiler.target>
 		<lucene.version>10.1.0</lucene.version>
