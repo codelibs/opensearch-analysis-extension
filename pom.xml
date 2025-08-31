@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.opensearch</groupId>
 	<artifactId>opensearch-analysis-extension</artifactId>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>3.2.0</version>
 	<packaging>jar</packaging>
 	<description>This plugin provides an analysis library for language processing in OpenSearch, including tokenization and morphological analysis using Lucene analyzers.</description>
 	<url>https://github.com/codelibs/opensearch-analysis-extension</url>
@@ -33,7 +33,7 @@
 		<connection>scm:git:git@github.com:codelibs/opensearch-analysis-extension.git</connection>
 		<developerConnection>scm:git:git@github.com:codelibs/opensearch-analysis-extension.git</developerConnection>
 		<url>git@github.com:codelibs/opensearch-analysis-extension.git</url>
-	  <tag>HEAD</tag>
+	  <tag>opensearch-analysis-extension-3.2.0</tag>
   </scm>
 	<properties>
 		<opensearch.version>3.2.0</opensearch.version>
