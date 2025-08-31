@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs.opensearch</groupId>
 	<artifactId>opensearch-analysis-extension</artifactId>
-	<version>3.1.1-SNAPSHOT</version>
+	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>This plugin provides an analysis library for language processing in OpenSearch, including tokenization and morphological analysis using Lucene analyzers.</description>
 	<url>https://github.com/codelibs/opensearch-analysis-extension</url>
@@ -36,11 +36,11 @@
 	  <tag>HEAD</tag>
   </scm>
 	<properties>
-		<opensearch.version>3.1.0</opensearch.version>
-		<opensearch.runner.version>3.1.0.0</opensearch.runner.version>
+		<opensearch.version>3.2.0</opensearch.version>
+		<opensearch.runner.version>3.2.0.0</opensearch.runner.version>
 		<opensearch.plugin.classname>org.codelibs.opensearch.extension.ExtensionPlugin</opensearch.plugin.classname>
 		<maven.compiler.target>21</maven.compiler.target>
-		<lucene.version>10.2.1</lucene.version>
+		<lucene.version>10.2.2</lucene.version>
 		<log4j.version>2.21.0</log4j.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
