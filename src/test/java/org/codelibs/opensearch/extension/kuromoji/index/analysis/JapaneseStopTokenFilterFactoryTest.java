@@ -13,30 +13,54 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.env.Environment;
-import org.opensearch.env.TestEnvironment;
 import org.opensearch.index.IndexSettings;
-import org.opensearch.test.IndexSettingsModule;
-import org.opensearch.test.OpenSearchTestCase;
 
-public class JapaneseStopTokenFilterFactoryTest extends OpenSearchTestCase {
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class JapaneseStopTokenFilterFactoryTest {
 
     private Environment env;
     private IndexSettings indexSettings;
+    private Path tempDir;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        tempDir = Files.createTempDirectory("test");
+
         Settings settings = Settings.builder()
-                .put("path.home", createTempDir().toString())
+
+                .put("path.home", tempDir.toString())
                 .put("index.version.created", org.opensearch.Version.CURRENT)
                 .build();
-        env = TestEnvironment.newEnvironment(settings);
-        indexSettings = IndexSettingsModule.newIndexSettings("test", settings);
+        env = new Environment(settings, tempDir.resolve("config"));
+        Files.createDirectories(env.configDir());
+        indexSettings = new IndexSettings(
+                org.opensearch.index.Index.create("test", "_na_"),
+                Settings.builder()
+                        .put(settings)
+                        .put("index.version.created", org.opensearch.Version.CURRENT)
+                        .build());
     }
 
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
+        if (tempDir != null && Files.exists(tempDir)) {
+            deleteDirectory(tempDir.toFile());
+        }
+    }
+    private void deleteDirectory(File dir) {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        dir.delete();
     }
 
     @Test
