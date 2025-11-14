@@ -106,6 +106,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Temporarily commented out to fix build issues
 			<plugin>
 				<groupId>org.sonatype.central</groupId>
 				<artifactId>central-publishing-maven-plugin</artifactId>
@@ -115,6 +116,7 @@
 					<publishingServerId>central</publishingServerId>
 				</configuration>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 	<repositories>

@@ -10,6 +10,7 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensearch.cluster.metadata.IndexMetadata;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.env.Environment;
 import org.opensearch.index.IndexSettings;
@@ -23,28 +24,26 @@ public class NGramSynonymTokenizerFactoryTest {
     private IndexSettings indexSettings;
     private Path tempDir;
 
-
-    // Simple Index implementation for testing
-    private static class TestIndex extends org.opensearch.index.Index {
-        TestIndex(String name, String uuid) {
-            super(name, uuid);
-        }
-    }
     @Before
     public void setUp() throws Exception {
         tempDir = Files.createTempDirectory("test");
+
         Settings settings = Settings.builder()
                 .put("path.home", tempDir.toString())
                 .put("index.version.created", org.opensearch.Version.CURRENT)
                 .build();
         env = new Environment(settings, tempDir.resolve("config"));
         Files.createDirectories(env.configDir());
-        indexSettings = new IndexSettings(
-                new TestIndex("test", "_na_"),
-                Settings.builder()
+
+        IndexMetadata indexMetadata = IndexMetadata.builder("test")
+                .settings(Settings.builder()
                         .put(settings)
                         .put("index.version.created", org.opensearch.Version.CURRENT)
-                        .build());
+                        .build())
+                .numberOfShards(1)
+                .numberOfReplicas(0)
+                .build();
+        indexSettings = new IndexSettings(indexMetadata, settings);
     }
 
     @After
