@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.env.Environment;
-import org.opensearch.index.Index;
 import org.opensearch.index.IndexSettings;
 
 import java.nio.file.Files;
@@ -25,6 +24,13 @@ public class KuromojiTokenizerFactoryTest {
     private IndexSettings indexSettings;
     private Path tempDir;
 
+
+    // Simple Index implementation for testing
+    private static class TestIndex extends org.opensearch.index.Index {
+        TestIndex(String name, String uuid) {
+            super(name, uuid);
+        }
+    }
     @Before
     public void setUp() throws Exception {
         tempDir = Files.createTempDirectory("test");
@@ -37,7 +43,7 @@ public class KuromojiTokenizerFactoryTest {
         env = new Environment(settings, tempDir.resolve("config"));
         Files.createDirectories(env.configDir());
         indexSettings = new IndexSettings(
-                org.opensearch.index.Index.create("test", "_na_"),
+                new TestIndex("test", "_na_"),
                 Settings.builder()
                         .put(settings)
                         .put("index.version.created", org.opensearch.Version.CURRENT)
