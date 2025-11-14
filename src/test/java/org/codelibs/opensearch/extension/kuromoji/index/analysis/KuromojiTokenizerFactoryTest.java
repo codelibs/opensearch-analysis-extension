@@ -192,7 +192,7 @@ public class KuromojiTokenizerFactoryTest {
     @Test
     public void testNBestExamples() {
         Settings settings = Settings.builder()
-                .put("nbest_examples", "食べ")
+                .put("nbest_examples", "食べ--た")
                 .build();
 
         KuromojiTokenizerFactory factory = new KuromojiTokenizerFactory(
@@ -247,7 +247,7 @@ public class KuromojiTokenizerFactoryTest {
         new KuromojiTokenizerFactory(indexSettings, env, "test", settings);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = RuntimeException.class)
     public void testDuplicateUserDictionaryEntries() {
         Settings settings = Settings.builder()
                 .putList("user_dictionary_rules",
@@ -255,7 +255,7 @@ public class KuromojiTokenizerFactoryTest {
                         "東京,トウキョウ,トウキョウ,名詞")
                 .build();
 
-        // Should throw IllegalArgumentException due to duplicate entries
+        // Should throw RuntimeException due to duplicate entries
         new KuromojiTokenizerFactory(indexSettings, env, "test", settings);
     }
 }

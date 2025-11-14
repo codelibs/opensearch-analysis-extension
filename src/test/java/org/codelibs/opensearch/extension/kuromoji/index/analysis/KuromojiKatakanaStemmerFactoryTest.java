@@ -93,19 +93,14 @@ public class KuromojiKatakanaStemmerFactoryTest {
         assertNotNull(tokenStream);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testMinimumLengthZero() {
         Settings settings = Settings.builder()
                 .put("minimum_length", 0)
                 .build();
 
-        KuromojiKatakanaStemmerFactory factory = new KuromojiKatakanaStemmerFactory(
-                indexSettings, env, "test", settings);
-
-        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer();
-        TokenStream tokenStream = factory.create(tokenizer);
-
-        assertNotNull(tokenStream);
+        // Should throw IllegalArgumentException because minimum_length must be >= 1
+        new KuromojiKatakanaStemmerFactory(indexSettings, env, "test", settings);
     }
 
     @Test
