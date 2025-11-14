@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.env.Environment;
+import org.opensearch.index.Index;
 import org.opensearch.index.IndexSettings;
 
 import java.nio.file.Files;
