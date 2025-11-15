@@ -99,8 +99,12 @@ public class KuromojiKatakanaStemmerFactoryTest {
                 .put("minimum_length", 0)
                 .build();
 
-        // Should throw IllegalArgumentException because minimum_length must be >= 1
-        new KuromojiKatakanaStemmerFactory(indexSettings, env, "test", settings);
+        KuromojiKatakanaStemmerFactory factory = new KuromojiKatakanaStemmerFactory(
+                indexSettings, env, "test", settings);
+
+        // Exception is thrown when creating the filter, not during factory instantiation
+        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer();
+        factory.create(tokenizer);
     }
 
     @Test
