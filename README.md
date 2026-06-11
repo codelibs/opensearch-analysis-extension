@@ -17,8 +17,8 @@ A comprehensive text analysis plugin for OpenSearch that provides advanced token
 ## Tech Stack
 
 - **Java**: 21
-- **OpenSearch**: 3.2.0
-- **Lucene**: 10.2.2
+- **OpenSearch**: 3.7.0
+- **Lucene**: 10.4.0
 - **Build System**: Maven 3.x
 - **Testing**: JUnit 4.13.2
 
@@ -26,14 +26,14 @@ A comprehensive text analysis plugin for OpenSearch that provides advanced token
 
 ### Prerequisites
 
-- OpenSearch 3.2.0 or later
+- OpenSearch 3.7.0 or later
 - Java 21 or later (for building from source)
 
 ### Installation
 
 #### From Maven Repository
 ```bash
-$OPENSEARCH_HOME/bin/opensearch-plugin install org.codelibs:opensearch-analysis-extension:3.2.0
+$OPENSEARCH_HOME/bin/opensearch-plugin install org.codelibs:opensearch-analysis-extension:3.7.0
 ```
 
 #### From Local Build
@@ -44,7 +44,7 @@ cd opensearch-analysis-extension
 mvn package
 
 # Install plugin
-$OPENSEARCH_HOME/bin/opensearch-plugin install file:target/releases/opensearch-analysis-extension-3.2.0.zip
+$OPENSEARCH_HOME/bin/opensearch-plugin install file:target/releases/opensearch-analysis-extension-3.7.0.zip
 ```
 
 ### Basic Usage Example
@@ -393,6 +393,8 @@ mvn jacoco:report
 
 | Plugin Version | OpenSearch Version | Lucene Version | Java Version |
 |:---------------|:-------------------|:---------------|:-------------|
+| 3.7.x | 3.7.0+ | 10.4.0+ | 21+ |
+| 3.6.x | 3.6.0+ | 10.4.0+ | 21+ |
 | 3.2.x | 3.2.0+ | 10.2.2+ | 21+ |
 | 3.1.x | 3.1.0+ | 10.1.x+ | 21+ |
 
