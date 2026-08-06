@@ -1,264 +1,136 @@
 # OpenSearch Analysis Extension
 
 [![Java CI with Maven](https://github.com/codelibs/opensearch-analysis-extension/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/opensearch-analysis-extension/actions/workflows/maven.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/org.codelibs.opensearch/opensearch-analysis-extension)](https://repo1.maven.org/maven2/org/codelibs/opensearch/opensearch-analysis-extension/)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/org.codelibs.opensearch/opensearch-analysis-extension)](https://central.sonatype.com/artifact/org.codelibs.opensearch/opensearch-analysis-extension)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
-A comprehensive text analysis plugin for OpenSearch that provides advanced tokenizers, character filters, and token filters with specialized support for Japanese text processing using Kuromoji analyzer.
+OpenSearch Analysis Extension adds character filters, tokenizers and token filters
+to OpenSearch, with a focus on Japanese text processing built on the Kuromoji
+morphological analyzer. It also provides a few generally useful components such as
+character-type filtering, token concatenation and dictionary files that can be
+reloaded without restarting the cluster.
 
-## Features
+## Compatibility
 
-- **Japanese Text Analysis**: Comprehensive Kuromoji-based tokenization and morphological analysis
-- **Character Normalization**: Iteration mark and prolonged sound mark character filters
-- **Advanced Token Filtering**: Number processing, character type filtering, concatenation filters
-- **Reloadable Components**: Dynamic dictionary reloading capabilities
-- **Extensible Architecture**: Easy integration of custom analysis components
+| Plugin Version | OpenSearch Version | Lucene Version | Java Version |
+|----------------|--------------------|----------------|--------------|
+| 3.8.x          | 3.8.0+             | 10.5.0+        | 21+          |
+| 3.7.x          | 3.7.0+             | 10.4.0+        | 21+          |
+| 3.6.x          | 3.6.0+             | 10.4.0+        | 21+          |
+| 3.2.x          | 3.2.0+             | 10.2.2+        | 21+          |
+| 3.1.x          | 3.1.0+             | 10.1.x+        | 21+          |
 
-## Tech Stack
+Released versions are listed on
+[Maven Central](https://central.sonatype.com/artifact/org.codelibs.opensearch/opensearch-analysis-extension/versions).
 
-- **Java**: 21
-- **OpenSearch**: 3.8.0
-- **Lucene**: 10.5.0
-- **Build System**: Maven 3.x
-- **Testing**: JUnit 4.13.2
+## Installation
 
-## Quick Start
-
-### Prerequisites
-
-- OpenSearch 3.8.0 or later
-- Java 21 or later (for building from source)
-
-### Installation
-
-#### From Maven Repository
 ```bash
-$OPENSEARCH_HOME/bin/opensearch-plugin install org.codelibs:opensearch-analysis-extension:3.8.0
+$OPENSEARCH_HOME/bin/opensearch-plugin install org.codelibs.opensearch:opensearch-analysis-extension:3.8.0
 ```
 
-#### From Local Build
-```bash
-# Clone and build
-git clone https://github.com/codelibs/opensearch-analysis-extension.git
-cd opensearch-analysis-extension
-mvn package
+Restart the node, then confirm that the plugin is loaded:
 
-# Install plugin
-$OPENSEARCH_HOME/bin/opensearch-plugin install file:target/releases/opensearch-analysis-extension-3.8.0.zip
+```bash
+$OPENSEARCH_HOME/bin/opensearch-plugin list
+# analysis-extension
 ```
 
-### Basic Usage Example
-
-Create an index with Japanese text analysis:
+To install a locally built package instead:
 
 ```bash
-curl -XPUT 'http://localhost:9200/sample/' -H 'Content-Type: application/json' -d'
-{
-    "settings": {
-        "index": {
-            "analysis": {
-                "analyzer": {
-                    "japanese_analyzer": {
-                        "type": "custom",
-                        "tokenizer": "japanese_tokenizer",
-                        "char_filter": ["iteration_mark", "prolonged_sound_mark"],
-                        "filter": ["japanese_baseform", "kanji_number", "char_type"]
-                    }
-                }
-            }
-        }
-    }
-}'
-```
-
-Test the analyzer:
-
-```bash
-curl -XGET 'http://localhost:9200/sample/_analyze' -H 'Content-Type: application/json' -d'
-{
-    "analyzer": "japanese_analyzer",
-    "text": "東京都港区にある会社"
-}'
-```
-
-## Development
-
-### Building from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/codelibs/opensearch-analysis-extension.git
-cd opensearch-analysis-extension
-
-# Build the plugin
 mvn clean package
-
-# Run tests
-mvn test
-
-# Skip tests during build
-mvn package -DskipTests=true
+$OPENSEARCH_HOME/bin/opensearch-plugin install file:target/releases/opensearch-analysis-extension-3.8.0-SNAPSHOT.zip
 ```
 
-### Project Structure
+Use `opensearch-plugin remove analysis-extension` to uninstall.
 
-```
-src/
-├── main/
-│   ├── java/org/codelibs/opensearch/extension/
-│   │   ├── ExtensionPlugin.java              # Main plugin class
-│   │   ├── analysis/                         # General analysis components
-│   │   │   ├── CharTypeFilterFactory.java
-│   │   │   ├── KanjiNumberFilterFactory.java
-│   │   │   └── ...
-│   │   └── kuromoji/                        # Japanese-specific components
-│   │       └── index/analysis/
-│   │           ├── KuromojiTokenizerFactory.java
-│   │           └── ...
-│   ├── assemblies/plugin.xml                 # Plugin assembly configuration
-│   └── plugin-metadata/
-│       ├── plugin-descriptor.properties      # Plugin metadata
-│       └── plugin-security.policy           # Security policy
-└── test/                                     # Unit and integration tests
-```
+## Getting Started
 
-### Contributing
+Create an index that uses the Japanese components:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes following the existing code style
-4. Add tests for new functionality
-5. Run the test suite (`mvn test`)
-6. Commit your changes (`git commit -m 'Add amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
-
-## Analysis Components
-
-### Character Filters
-
-#### IterationMarkCharFilter (`iteration_mark`)
-Normalizes iteration mark characters. For example, converts "学問のすゝめ" to "学問のすすめ".
-
-```json
-{
-  "char_filter": ["iteration_mark"]
-}
-```
-
-#### ProlongedSoundMarkCharFilter (`prolonged_sound_mark`)
-Replaces various prolonged sound mark characters with `\u30fc` (KATAKANA-HIRAGANA SOUND MARK).
-
-**Supported Unicode Characters:**
-| Unicode | Name |
-|:-----:|:-----|
-| U002D | HYPHEN-MINUS |
-| UFF0D | FULLWIDTH HYPHEN-MINUS |
-| U2010 | HYPHEN |
-| U2011 | NON-BREAKING HYPHEN |
-| U2012 | FIGURE DASH |
-| U2013 | EN DASH |
-| U2014 | EM DASH |
-| U2015 | HORIZONTAL BAR |
-| U207B | SUPERSCRIPT MINUS |
-| U208B | SUBSCRIPT MINUS |
-| U30FC | KATAKANA-HIRAGANA SOUND MARK |
-
-```json
-{
-  "char_filter": ["prolonged_sound_mark"]
-}
-```
-
-#### JapaneseIterationMarkCharFilter (`japanese_iteration_mark`)
-Kuromoji-specific iteration mark character filter for Japanese text processing.
-
-### Token Filters
-
-#### KanjiNumberFilter (`kanji_number`)
-Converts Kanji number characters (e.g., "一") to Arabic numerals (e.g., "1").
-
-```json
-{
-  "filter": ["kanji_number"]
-}
-```
-
-#### CharTypeFilter (`char_type`)
-Keeps tokens based on character type: alphabetic, digit, or letter.
-
-```json
-{
-  "filter": {
-    "my_char_type": {
-      "type": "char_type",
-      "digit": false,
-      "alphabetic": true,
-      "letter": true
+```bash
+curl -XPUT 'localhost:9200/sample' -H 'Content-Type: application/json' -d '{
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "japanese_analyzer": {
+            "type": "custom",
+            "char_filter": ["iteration_mark", "prolonged_sound_mark"],
+            "tokenizer": "japanese_tokenizer",
+            "filter": ["japanese_baseform", "kanji_number", "char_type"]
+          }
+        }
+      }
     }
   }
-}
+}'
 ```
 
-**Character Type Behavior:**
-| Token | Default | digit:false | letter:false |
-|:------|:-------:|:-----------:|:------------:|
-| abc | keep | keep | keep |
-| ab1 | keep | keep | keep |
-| abあ | keep | keep | keep |
-| 123 | keep | remove | keep |
-| 12あ | keep | keep | keep |
-| あいう | keep | keep | remove |
-| #-= | remove | remove | remove |
+Check the result with the analyze API:
 
-#### NumberConcatenationFilter (`number_concat`)
-Concatenates tokens with following numbers. Example: "10" + "years" → "10years".
+```bash
+curl -XGET 'localhost:9200/sample/_analyze' -H 'Content-Type: application/json' -d '{
+  "analyzer": "japanese_analyzer",
+  "text": "東京都港区にある会社"
+}'
+```
+
+## Character Filters
+
+### `iteration_mark`
+
+Normalizes Japanese iteration marks. For example, `学問のすゝめ` becomes
+`学問のすすめ`.
 
 ```json
-{
-  "filter": {
-    "numconcat_filter": {
-      "type": "number_concat",
-      "suffix_words_path": "suffix.txt"
-    }
-  }
-}
+{ "char_filter": ["iteration_mark"] }
 ```
 
-#### PatternConcatenationFilter (`pattern_concat`)
-Concatenates tokens matching specified patterns.
+### `prolonged_sound_mark`
+
+Replaces dash-like characters with `ー` (KATAKANA-HIRAGANA PROLONGED SOUND
+MARK), so that variants of the same katakana word normalize to a single form.
+
+| Code point | Name |
+|:----------:|:-----|
+| U+002D | HYPHEN-MINUS |
+| U+FF0D | FULLWIDTH HYPHEN-MINUS |
+| U+2010 | HYPHEN |
+| U+2011 | NON-BREAKING HYPHEN |
+| U+2012 | FIGURE DASH |
+| U+2013 | EN DASH |
+| U+2014 | EM DASH |
+| U+2015 | HORIZONTAL BAR |
+| U+207B | SUPERSCRIPT MINUS |
+| U+208B | SUBSCRIPT MINUS |
+| U+30FC | KATAKANA-HIRAGANA PROLONGED SOUND MARK |
 
 ```json
-{
-  "filter": {
-    "pattern_filter": {
-      "type": "pattern_concat",
-      "pattern1": "[0-9]+",
-      "pattern2": "year(s)?"
-    }
-  }
-}
+{ "char_filter": ["prolonged_sound_mark"] }
 ```
 
-#### Additional Token Filters
+### `japanese_iteration_mark`
 
-- **japanese_baseform**: Converts to base forms
-- **japanese_part_of_speech**: Part-of-speech filtering
-- **japanese_readingform**: Reading form conversion
-- **japanese_stemmer**: Japanese stemming
-- **japanese_stop**: Japanese stop word removal
-- **japanese_number**: Japanese number processing
-- **japanese_completion**: Completion suggestions
-- **stop_prefix/stop_suffix**: Prefix/suffix stop word filters
-- **reloadable_keyword_marker**: Dynamic keyword marking
-- **reloadable_stop**: Dynamic stop word filtering
-- **flexible_porter_stem**: Flexible Porter stemming
-- **alphanum_word**: Alphanumeric word processing
+The Kuromoji iteration mark character filter, equivalent to the one shipped with
+`analysis-kuromoji`.
 
-### Tokenizers
+## Tokenizers
 
-#### JapaneseTokenizer (`japanese_tokenizer`)
-Advanced Japanese tokenization using Kuromoji morphological analyzer.
+### `japanese_tokenizer`
+
+Kuromoji-based Japanese tokenizer.
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `mode` | `search` | Segmentation mode: `normal`, `search` or `extended`. |
+| `discard_punctuation` | `true` | Drop punctuation tokens. |
+| `discard_compound_token` | `false` | Drop the original compound token in `search` mode. |
+| `user_dictionary` | none | Path to a user dictionary file, relative to the OpenSearch config directory. |
+| `user_dictionary_rules` | none | Inline user dictionary rules. Cannot be combined with `user_dictionary`. |
+| `nbest_cost` | `-1` | Additional cost allowed when generating n-best paths. |
+| `nbest_examples` | none | Examples used to derive `nbest_cost`. |
 
 ```json
 {
@@ -273,177 +145,239 @@ Advanced Japanese tokenization using Kuromoji morphological analyzer.
 }
 ```
 
-#### ReloadableKuromojiTokenizer (`reloadable_kuromoji`)
-Dynamically reloads user dictionary files when updated.
+### `ngram_synonym`
+
+N-gram tokenizer that expands synonyms while tokenizing, which avoids the
+positional mismatches that occur when a synonym filter is applied after n-gram
+tokenization.
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `n` | `2` | N-gram size. |
+| `delimiters` | whitespace | Characters treated as token boundaries. |
+| `synonyms` | none | Inline synonym rules. |
+| `synonyms_path` | none | Path to a synonym file, relative to the OpenSearch config directory. |
+| `expand` | `true` | Expand synonym rules in both directions. |
+| `expand_ngram` | `false` | Also emit n-grams of the expanded synonyms. |
+| `ignore_case` | `true` | Match synonyms case-insensitively. |
+
+## Token Filters
+
+### `kanji_number`
+
+Converts Kanji numerals to Arabic numerals, for example `一` to `1`.
+
+```json
+{ "filter": ["kanji_number"] }
+```
+
+### `char_type`
+
+Keeps or removes tokens according to the character types they contain. A token is
+kept if every one of its enabled character classes is allowed.
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `alphabetic` | `true` | Keep tokens containing ASCII letters. |
+| `digit` | `true` | Keep tokens containing digits. |
+| `letter` | `true` | Keep tokens containing non-ASCII letters. |
 
 ```json
 {
-  "tokenizer": {
-    "reloadable_tokenizer": {
-      "type": "reloadable_kuromoji",
-      "mode": "extended",
-      "discard_punctuation": false,
-      "user_dictionary": "userdict_ja.txt"
+  "filter": {
+    "my_char_type": {
+      "type": "char_type",
+      "digit": false,
+      "alphabetic": true,
+      "letter": true
     }
   }
 }
 ```
 
-**Note**: Dictionary updates may affect search results due to term changes.
+| Token | Default | `digit: false` | `letter: false` |
+|:------|:-------:|:--------------:|:---------------:|
+| abc | keep | keep | keep |
+| ab1 | keep | keep | keep |
+| abあ | keep | keep | keep |
+| 123 | keep | remove | keep |
+| 12あ | keep | keep | keep |
+| あいう | keep | keep | remove |
+| #-= | remove | remove | remove |
 
-#### NGramSynonymTokenizer (`ngram_synonym`)
-N-gram tokenization with synonym support.
+### `number_concat`
 
-## Configuration Examples
+Concatenates a number with the token that follows it when that token is listed in
+the suffix dictionary, so that `10` and `years` become `10years`.
 
-### Complete Japanese Analysis Setup
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `suffix_words_path` | none | Path to the suffix word list, relative to the OpenSearch config directory. |
 
 ```json
 {
-  "settings": {
-    "index": {
-      "analysis": {
-        "char_filter": {
-          "japanese_normalize": {
-            "type": "mapping",
-            "mappings": ["iteration_mark", "prolonged_sound_mark"]
-          }
-        },
-        "tokenizer": {
-          "japanese_custom": {
-            "type": "japanese_tokenizer",
-            "mode": "extended",
-            "user_dictionary": "custom_dict.txt"
-          }
-        },
-        "filter": {
-          "japanese_filters": {
-            "type": "japanese_baseform"
-          },
-          "number_normalize": {
-            "type": "kanji_number"
-          },
-          "char_cleanup": {
-            "type": "char_type",
-            "digit": true,
-            "alphabetic": true,
-            "letter": true
-          }
-        },
-        "analyzer": {
-          "japanese_full": {
-            "type": "custom",
-            "char_filter": ["iteration_mark", "prolonged_sound_mark"],
-            "tokenizer": "japanese_custom",
-            "filter": [
-              "japanese_baseform",
-              "japanese_part_of_speech",
-              "kanji_number",
-              "char_type",
-              "lowercase"
-            ]
-          }
-        }
-      }
+  "filter": {
+    "numconcat_filter": {
+      "type": "number_concat",
+      "suffix_words_path": "suffix.txt"
     }
   }
 }
 ```
 
-### Multi-Language Analysis
+### `pattern_concat`
+
+Concatenates two adjacent tokens when they match the configured regular
+expressions.
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `pattern1` | none | Pattern the first token must match. |
+| `pattern2` | `.*` | Pattern the second token must match. |
 
 ```json
 {
-  "settings": {
-    "analysis": {
-      "analyzer": {
-        "multilang": {
-          "type": "custom",
-          "tokenizer": "standard",
-          "char_filter": ["prolonged_sound_mark"],
-          "filter": [
-            "lowercase",
-            "char_type",
-            "flexible_porter_stem"
-          ]
-        }
-      }
+  "filter": {
+    "pattern_filter": {
+      "type": "pattern_concat",
+      "pattern1": "[0-9]+",
+      "pattern2": "year(s)?"
     }
   }
 }
 ```
 
-## Testing
+### `kuromoji_pos_concat`
 
-```bash
-# Run all tests
-mvn test
+Concatenates adjacent tokens that share one of the configured part-of-speech tags.
+Requires a Kuromoji tokenizer upstream.
 
-# Run specific test class
-mvn test -Dtest=ExtensionPluginTest
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `tags` | none | Part-of-speech tags to concatenate. |
+| `tags_path` | none | Path to a file listing the tags, relative to the OpenSearch config directory. |
 
-# Run tests with verbose output
-mvn test -X
+### `stop_prefix` and `stop_suffix`
 
-# Generate test coverage report
-mvn jacoco:report
-```
+Remove tokens that start (`stop_prefix`) or end (`stop_suffix`) with one of the
+configured words.
 
-## Version Compatibility
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `stopwords` | none | Inline word list. |
+| `stopwords_path` | none | Path to a word list, relative to the OpenSearch config directory. |
+| `ignore_case` | `false` | Match case-insensitively. |
 
-| Plugin Version | OpenSearch Version | Lucene Version | Java Version |
-|:---------------|:-------------------|:---------------|:-------------|
-| 3.8.x | 3.8.0+ | 10.5.0+ | 21+ |
-| 3.7.x | 3.7.0+ | 10.4.0+ | 21+ |
-| 3.6.x | 3.6.0+ | 10.4.0+ | 21+ |
-| 3.2.x | 3.2.0+ | 10.2.2+ | 21+ |
-| 3.1.x | 3.1.0+ | 10.1.x+ | 21+ |
+### `alphanum_word`
 
-## Performance Considerations
+Splits alphanumeric tokens that exceed a maximum length.
 
-- **Dictionary Size**: Larger user dictionaries impact tokenization performance
-- **Filter Chain**: Minimize filter chain length for better performance  
-- **Reloadable Components**: Use sparingly in high-throughput environments
-- **Memory Usage**: Monitor heap usage with large dictionary files
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `max_token_length` | `255` | Maximum length before a token is split. |
+
+### `flexible_porter_stem`
+
+Porter stemmer whose individual steps can be enabled or disabled, which is useful
+when the default stemmer is too aggressive for a particular corpus.
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `step1` … `step6` | `true` | Enable the corresponding step of the Porter algorithm. |
+
+### Reloadable filters
+
+These filters re-read their dictionary file at a fixed interval, so the word list
+can be updated without restarting the cluster or reopening the index.
+
+#### `reloadable_stop`
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `stopwords_path` | none | Path to the stop word file, relative to the OpenSearch config directory. |
+| `reload_interval` | `1m` | How often the file is checked for changes. |
+| `ignore_case` | `false` | Match case-insensitively. |
+
+#### `reloadable_keyword_marker`
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `keywords_path` | none | Path to the keyword file, relative to the OpenSearch config directory. |
+| `reload_interval` | `1m` | How often the file is checked for changes. |
+
+Updating a dictionary changes the terms produced at index time. Documents indexed
+before the change keep their old terms until they are reindexed.
+
+### Kuromoji filters
+
+The following filters wrap the corresponding Lucene Kuromoji components and behave
+like their `analysis-kuromoji` counterparts:
+
+| Name | Description |
+|------|-------------|
+| `japanese_baseform` | Replaces inflected forms with their base form. |
+| `japanese_part_of_speech` | Removes tokens with the configured part-of-speech tags. |
+| `japanese_readingform` | Replaces tokens with their reading, in katakana or romaji. |
+| `japanese_stemmer` | Removes the trailing prolonged sound mark from katakana. |
+| `japanese_stop` | Removes Japanese stop words. |
+| `japanese_number` | Normalizes Japanese numerals to Arabic numerals. |
+| `japanese_completion` | Emits romaji completion variants for suggestions. |
+
+## Deprecated Names
+
+The following names remain registered for backward compatibility and are scheduled
+for removal. Each is an alias of the component listed next to it and adds no
+behaviour of its own.
+
+| Deprecated name | Use instead |
+|-----------------|-------------|
+| `reloadable_kuromoji` | `japanese_tokenizer` |
+| `reloadable_kuromoji_tokenizer` | `japanese_tokenizer` |
+| `reloadable_kuromoji_iteration_mark` | `japanese_iteration_mark` |
+| `reloadable_kuromoji_baseform` | `japanese_baseform` |
+| `reloadable_kuromoji_part_of_speech` | `japanese_part_of_speech` |
+| `reloadable_kuromoji_readingform` | `japanese_readingform` |
+| `reloadable_kuromoji_stemmer` | `japanese_stemmer` |
+| `reloadable_kuromoji_number` | `japanese_number` |
+| `reloadable_ja_stop` | `japanese_stop` |
 
 ## Troubleshooting
 
-### Common Issues
-
-**Plugin Installation Fails**
-```bash
-# Check OpenSearch version compatibility
-$OPENSEARCH_HOME/bin/opensearch --version
-
-# Verify plugin version matches OpenSearch version
-$OPENSEARCH_HOME/bin/opensearch-plugin list
-```
-
-**Dictionary Not Loading**
-```bash
-# Check dictionary file permissions and encoding (UTF-8)
-# Verify path in OpenSearch configuration directory
-# Check OpenSearch logs for error messages
-```
-
-**Analysis Not Working**
-```bash
-# Test analyzer configuration
-curl -XGET 'localhost:9200/_analyze' -d '{"analyzer":"your_analyzer","text":"test text"}'
-
-# Check plugin registration
-curl -XGET 'localhost:9200/_nodes/plugins'
-```
-
-### Debug Mode
-
-Enable debug logging in `opensearch.yml`:
+Enable debug logging in `opensearch.yml` to trace analyzer construction and
+dictionary loading:
 
 ```yaml
 logger.org.codelibs.opensearch.extension: DEBUG
 ```
 
+Dictionary files are resolved relative to the OpenSearch config directory and must
+be UTF-8 encoded and readable by the OpenSearch process.
+
+## Building from Source
+
+Java 21 and Maven 3.6 or later are required.
+
+```bash
+git clone https://github.com/codelibs/opensearch-analysis-extension.git
+cd opensearch-analysis-extension
+mvn clean package
+```
+
+The plugin package is written to `target/releases/`.
+
+```bash
+mvn test                              # run the test suite
+mvn test -Dtest=ExtensionPluginTest   # run a single test class
+mvn package -DskipTests=true          # build without running tests
+```
+
+## Contributing
+
+Issues and pull requests are welcome at
+[github.com/codelibs/opensearch-analysis-extension](https://github.com/codelibs/opensearch-analysis-extension).
+Please add tests for behaviour changes and make sure `mvn test` passes before
+opening a pull request.
+
 ## License
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
-
