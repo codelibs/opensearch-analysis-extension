@@ -20,13 +20,15 @@ reloaded without restarting the cluster.
 | 3.2.x          | 3.2.0+             | 10.2.2+        | 21+          |
 | 3.1.x          | 3.1.0+             | 10.1.x+        | 21+          |
 
-Released versions are listed on
+Released versions are listed in the
+[CodeLibs repository](https://maven.codelibs.org/release/org/codelibs/opensearch/opensearch-analysis-extension/).
+Version 3.8.0 and earlier were published to
 [Maven Central](https://central.sonatype.com/artifact/org.codelibs.opensearch/opensearch-analysis-extension/versions).
 
 ## Installation
 
 ```bash
-$OPENSEARCH_HOME/bin/opensearch-plugin install org.codelibs.opensearch:opensearch-analysis-extension:3.8.0
+$OPENSEARCH_HOME/bin/opensearch-plugin install https://maven.codelibs.org/release/org/codelibs/opensearch/opensearch-analysis-extension/3.8.1/opensearch-analysis-extension-3.8.1.zip
 ```
 
 Restart the node, then confirm that the plugin is loaded:
@@ -40,7 +42,7 @@ To install a locally built package instead:
 
 ```bash
 mvn clean package
-$OPENSEARCH_HOME/bin/opensearch-plugin install file:target/releases/opensearch-analysis-extension-3.8.0-SNAPSHOT.zip
+$OPENSEARCH_HOME/bin/opensearch-plugin install file:target/releases/opensearch-analysis-extension-3.8.1-SNAPSHOT.zip
 ```
 
 Use `opensearch-plugin remove analysis-extension` to uninstall.
